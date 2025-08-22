@@ -1,0 +1,82 @@
+services:
+  temporal:
+    image: temporalio/auto-setup:1.23 # or :latest
+    ports: ["7233:7233","8233:8233"]
+    environment:
+      - DB=mysql
+      - MYSQL_SEEDS=mysql
+      - MYSQL_USER=root
+      - MYSQL_PWD=root
+      - MYSQL_DB=temporal
+      - VISIBILITY_DB=temporal_visibility
+      - TEMPORAL_UI_ENABLED=true
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    ports: ["3307:3306"]   # host 3307 -> container 3306 (you already did this)
+    environment:
+      MYSQL_DATABASE: trellis
+      MYSQL_USER: trellis
+      MYSQL_PASSWORD: trellisPW
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/1_init.sql
+
+  adminer:
+    image: adminer
+    ports: ["8080:8080"]
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+
+  api:
+    build: .
+    depends_on:
+      - temporal
+      - mysql
+    environment:
+      # inside compose, use service name + container port
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3307
+      MYSQL_DB: trellis
+      MYSQL_USER: trellis
+      MYSQL_PASSWORD: trellisPW
+      TEMPORAL_TARGET: temporal:7233
+      ORDERS_TQ: orders-tq
+      SHIPPING_TQ: shipping-tq
+    ports:
+      - "8000:8000"
+    command: uvicorn app.api:app --host 0.0.0.0 --port 8000
+
+  worker-orders:
+    build: .
+    depends_on:
+      - temporal
+      - mysql
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3307
+      MYSQL_DB: trellis
+      MYSQL_USER: trellis
+      MYSQL_PASSWORD: trellisPW
+      TEMPORAL_TARGET: temporal:7233
+      ORDERS_TQ: orders-tq
+      SHIPPING_TQ: shipping-tq
+    command: python -m app.workers_orders
+
+  worker-shipping:
+    build: .
+    depends_on:
+      - temporal
+      - mysql
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3307
+      MYSQL_DB: trellis
+      MYSQL_USER: trellis
+      MYSQL_PASSWORD: trellisPW
+      TEMPORAL_TARGET: temporal:7233
+      ORDERS_TQ: orders-tq
+      SHIPPING_TQ: shipping-tq
+    command: python -m app.workers_shipping

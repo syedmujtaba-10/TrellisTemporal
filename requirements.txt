@@ -1,0 +1,12 @@
+# Runtime deps
+fastapi>=0.110,<0.117
+uvicorn>=0.30,<0.33
+temporalio>=1.6,<2.0
+SQLAlchemy>=2.0,<2.1
+aiomysql>=0.2,<0.3
+cryptography>=42.0.0
+structlog>=24.1,<25.0
+python-dotenv>=1.0,<2.0
+greenlet>=3.0,<4.0
+pydantic>=2.7,<3.0
+typing-extensions>=4.9,<5.0
