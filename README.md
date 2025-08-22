@@ -1,4 +1,4 @@
-# Trellis Temporal Take-Home (Python) — Order → Payment → Shipping
+# Trellis Temporal Take-Home (Python) - Order -> Payment -> Shipping
 
 This repo implements the take-home using Temporal’s Python SDK with a **single-payload Order workflow**, a **Shipping child workflow**, and a **local MySQL** database for persistence (orders, payments, shipments, events). It includes:
 
@@ -33,19 +33,19 @@ This repo implements the take-home using Temporal’s Python SDK with a **single
 
 **OrderWorkflow** (parent, task queue `orders-tq`)
 
-1. `receive_order` → DB insert + event.
-2. `validate_order` → DB state update.
-3. Manual Review window (timer \~3s) → waits for `approve` **signal**.
-4. `charge_payment` → idempotent by `payment_id` (DB upsert).
+1. `receive_order` -> DB insert + event.
+2. `validate_order` -> DB state update.
+3. Manual Review window (timer \~3s) -> waits for `approve` **signal**.
+4. `charge_payment` -> idempotent by `payment_id` (DB upsert).
 5. Starts **child** `ShippingWorkflow` on **`shipping-tq`**.
-6. `mark_shipped` → DB state update to `shipped`.
+6. `mark_shipped` -> DB state update to `shipped`.
 
 **Signals**
 
-* `approve()` — pass manual review.
-* `cancel_order(reason)` — cancel before shipment.
-* `update_address(address)` — update prior to dispatch.
-* From child: `dispatch_failed(reason)` → parent may retry child.
+* `approve()` - pass manual review.
+* `cancel_order(reason)` - cancel before shipment.
+* `update_address(address)` - update prior to dispatch.
+* From child: `dispatch_failed(reason)` -> parent may retry child.
 
 **ShippingWorkflow** (child, task queue `shipping-tq`)
 
@@ -284,4 +284,5 @@ MYSQL_PASSWORD=trellisPW
 You can also place them in a `.env` and load via `python-dotenv` (already included).
 
 ---
+
 
