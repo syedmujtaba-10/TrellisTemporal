@@ -137,7 +137,7 @@ docker compose down -v
 docker compose up
 ```
 
-### 3) Orders worker
+### 2) Orders worker
 
 ```powershell
 .\trellisvenv\Scripts\Activate.ps1
@@ -145,7 +145,7 @@ docker compose up
 python -m app.workers_orders
 ```
 
-### 4) Shipping worker
+### 3) Shipping worker
 
 ```powershell
 .\trellisvenv\Scripts\Activate.ps1
@@ -153,7 +153,7 @@ python -m app.workers_orders
 python -m app.workers_shipping
 ```
 
-### 5) API (FastAPI)
+### 4) API (FastAPI)
 
 ```powershell
 .\trellisvenv\Scripts\Activate.ps1
@@ -284,3 +284,4 @@ MYSQL_PASSWORD=trellisPW
 You can also place them in a `.env` and load via `python-dotenv` (already included).
 
 ---
+
